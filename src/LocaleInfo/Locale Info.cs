@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -14,6 +15,18 @@ namespace ThirdGenLocales
 {
     public partial class LocaleInfo : Form
     {
+        public LocaleInfo()
+        {
+            InitializeComponent();
+        }
+
+        private void Form_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        IndexHeaderFunctions IHF = new IndexHeaderFunctions();
+
         Reader r = null;
 
         int indexheaderoffset = 0;
@@ -43,6 +56,614 @@ namespace ThirdGenLocales
         string halo4tu5build = "21391.13.03.13.1711.main";
         string halo4tu6build = "21401.13.04.23.1849.main";
         string halo4tu7build = "21501.13.08.06.2311.main";
+
+        // The main function that is used when a file is opened or dropped.
+        public void Locales()
+        {
+            ClearBoxes();
+
+            directoryBox.Paste(path);
+
+            r = new Reader(path);
+
+            r.Position = 0x0;
+            string headmagic = r.ReadString(0x4);
+
+            if (headmagic == "head")
+            {
+                r.Position = 0x10;
+                int indexheaderaddress = r.ReadInt32();
+
+                r.Position = 0x11C;
+                string build = r.ReadString(0x20);
+
+                buildText.Paste(build);
+
+                r.Position = 0x13C;
+                short type = r.ReadInt16();
+                bool ingamemap = (type != 0x3 && type != 0x4);
+
+                bool halo3beta = (buildText.Text == halo3betabuild);
+
+                bool halo3 = (buildText.Text == halo3build);
+                bool halo3review = (buildText.Text == halo3reviewbuild);
+                bool halo3epsilon = (buildText.Text == halo3epsilonbuild);
+                bool halo3mythic = (buildText.Text == halo3mythicbuild);
+
+                bool halo3odst = (buildText.Text == halo3odstbuild);
+
+                bool reachprebeta = (buildText.Text == reachprebetabuild);
+                bool reachbeta = (buildText.Text == reachbetabuild);
+                bool reachbetas = (reachprebeta || reachbeta);
+
+                bool reach = (buildText.Text == reachbuild);
+                bool reachdemo = (buildText.Text == reachdemobuild);
+                bool reachbuilds = (reach || reachdemo);
+
+                bool halo4tu0 = (buildText.Text == halo4build);
+                bool halo4tu2 = (buildText.Text == halo4tu2build);
+                bool halo4tu3 = (buildText.Text == halo4tu3build);
+                bool halo4tu4 = (buildText.Text == halo4tu4build);
+                bool halo4tu5 = (buildText.Text == halo4tu5build);
+                bool halo4tu6 = (buildText.Text == halo4tu6build);
+                bool halo4tu7 = (buildText.Text == halo4tu7build);
+
+                bool allhalo3noODST = (halo3 || halo3mythic || halo3review || halo3epsilon);
+                bool allhalo3builds = (allhalo3noODST || halo3odst);
+                bool allreachbuilds = (reachbetas || reachbuilds);
+                bool halo4 = (halo4tu0 || halo4tu2 || halo4tu3 || halo4tu4 || halo4tu5 || halo4tu6 || halo4tu7);
+
+                bool thirdgennoH3B = (allhalo3builds || allreachbuilds || halo4);
+
+                bool thirdgen = (thirdgennoH3B || halo3beta);
+
+                IndexHeaderFunctions IHF = new IndexHeaderFunctions();
+
+                if (!thirdgen)
+                {
+                    UnrecognizedBuildDialog();
+                }
+
+                if (ingamemap)
+                {
+                    if (halo3beta)
+                    {
+                        H3BLocales();
+                    }
+                    if (allhalo3noODST)
+                    {
+                        H3Locales();
+                    }
+                    if (halo3odst)
+                    {
+                        ODSTLocales();
+                    }
+                    if (reachbetas)
+                    {
+                        ReachBetaLocales();
+                    }
+                    if (reachbuilds)
+                    {
+                        ReachLocales();
+                    }
+                    if (halo4)
+                    {
+                        r.Position = 0x488;
+                        int localemagic = r.ReadInt32();
+
+                        if (localemagic != 0)
+                        {
+                            H4Locales();
+                        }
+
+                        if (localemagic == 0)
+                        {
+                            H4NoRawLocales();
+                        }
+                    }
+                }
+                if (!ingamemap)
+                {
+                    NoLocalesDialog();
+                }
+            }
+
+            if (headmagic == "daeh")
+            {
+                Non3rdGenDialog();
+            }
+
+            if (headmagic != "head" && headmagic != "daeh")
+            {
+                BadHeaderMagDialog();
+            }
+        }
+
+        // Drag-Drop
+        private void Form_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+        }
+
+        private void Form_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+            path = files[files.Length - 1];
+            Locales();
+        }
+
+        //Browse Button
+        private void browseButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "3rd Gen Blam .map Files (*.map)|*.map";
+
+            if (open.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                path = open.FileName;
+                Locales();
+            }
+        }
+
+        //These are pretty self explanatory.
+        //The abbreviated name before "Locales" tells you what game it's for.
+        //If "FL" is in the name, the function is for force-loading.
+        public void H3BLocales()
+        {
+            path = directoryBox.Text;
+            r = new Reader(path);
+
+            HideH4Values();
+
+            r.Position = 0x10;
+            int indexheaderaddress = r.ReadInt32();
+
+            r.Position = 0x14;
+            int metaoff = r.ReadInt32();
+
+            r.Position = 0x13C;
+            short type = r.ReadInt16();
+            bool ingamemap = (type != 0x3 && type != 0x4);
+
+            gameText.Paste("Halo 3 Beta");
+
+            r.Position = 0x194;
+            string Internal = r.ReadString(0x20);
+            internalText.Paste(Internal);
+
+            r.Position = 0x2F0;
+            int virtualbase = r.ReadInt32();
+
+            tagmask = (virtualbase - metaoff);
+
+            indexheaderoffset = (indexheaderaddress - tagmask);
+
+            int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 4, tagmask);
+
+            if (ingamemap)
+            {
+                GetH3BLocales(path, globalsoffset);
+            }
+
+            if (!ingamemap)
+            {
+                NoLocalesDialog();
+            }
+        }
+
+        public void H3BFLLocales()
+        {
+            gameText.Paste("Halo 3 Beta (Force-Load)");
+
+            try
+            {
+                path = directoryBox.Text;
+                r = new Reader(path);
+
+                HideH4Values();
+
+                r.Position = 0x10;
+                int indexheaderaddress = r.ReadInt32();
+
+                r.Position = 0x14;
+                int metaoff = r.ReadInt32();
+
+                r.Position = 0x13C;
+                short type = r.ReadInt16();
+                bool ingamemap = (type != 0x3 && type != 0x4);
+
+                r.Position = 0x194;
+                string Internal = r.ReadString(0x20);
+                internalText.Paste(Internal);
+
+                r.Position = 0x2F0;
+                int virtualbase = r.ReadInt32();
+
+                tagmask = (virtualbase - metaoff);
+
+                indexheaderoffset = (indexheaderaddress - tagmask);
+
+                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 4, tagmask);
+
+                if (ingamemap)
+                {
+                    GetH3BLocales(path, globalsoffset);
+                }
+
+                if (!ingamemap)
+                {
+                    NoLocalesDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        public void H3Locales()
+        {
+            bool halo3 = (buildText.Text == halo3build);
+            bool halo3review = (buildText.Text == halo3reviewbuild);
+            bool halo3epsilon = (buildText.Text == halo3epsilonbuild);
+            bool halo3mythic = (buildText.Text == halo3mythicbuild);
+
+            if (halo3)
+                gameText.Paste("Halo 3");
+            if (halo3review)
+                gameText.Paste("Halo 3 Review");
+            if (halo3epsilon)
+                gameText.Paste("Halo 3 Epsilon");
+            if (halo3mythic)
+                gameText.Paste("Halo 3 Mythic");
+
+            int[] iho_tm = LocalesBaseInts();
+
+            indexheaderoffset = iho_tm[0];
+            tagmask = iho_tm[1];
+
+            int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 5, tagmask);
+
+            GetLocales(path, globalsoffset, 0x1C4);
+        }
+
+        public void H3FLLocales()
+        {
+            gameText.Paste("Halo 3 (Force-Load)");
+
+            try
+            {
+                int[] iho_tm = LocalesBaseInts();
+
+                indexheaderoffset = iho_tm[0];
+                tagmask = iho_tm[1];
+
+                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 5, tagmask);
+
+                GetLocales(path, globalsoffset, 0x1C4);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        public void ODSTLocales()
+        {
+            gameText.Paste("Halo 3: ODST");
+
+            int[] iho_tm = LocalesBaseInts();
+
+            indexheaderoffset = iho_tm[0];
+            tagmask = iho_tm[1];
+
+            int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 5, tagmask);
+
+            GetLocales(path, globalsoffset, 0x1FC);
+        }
+
+        public void ODSTFLLocales()
+        {
+            gameText.Paste("Halo 3: ODST (Force-Load)");
+
+            try
+            {
+                int[] iho_tm = LocalesBaseInts();
+
+                indexheaderoffset = iho_tm[0];
+                tagmask = iho_tm[1];
+
+                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 5, tagmask);
+
+                GetLocales(path, globalsoffset, 0x1FC);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        public void ReachBetaLocales()
+        {
+            bool reachprebeta = (buildText.Text == reachprebetabuild);
+            bool reachbeta = (buildText.Text == reachbetabuild);
+            bool reachbetas = (reachprebeta || reachbeta);
+
+            if (reachprebeta)
+                gameText.Paste("Halo: Reach Pre-Beta");
+            if (reachbeta)
+                gameText.Paste("Halo: Reach Beta");
+
+            int[] iho_tm = LocalesBaseInts();
+
+            indexheaderoffset = iho_tm[0];
+            tagmask = iho_tm[1];
+
+            int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
+
+            GetLocales(path, globalsoffset, 0x240);
+        }
+
+        public void ReachBetaFLLocales()
+        {
+            gameText.Paste("Halo: Reach Beta (Force-Load)");
+
+            try
+            {
+                int[] iho_tm = LocalesBaseInts();
+
+                indexheaderoffset = iho_tm[0];
+                tagmask = iho_tm[1];
+
+                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
+
+                GetLocales(path, globalsoffset, 0x240);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        public void ReachLocales()
+        {
+            bool reach = (buildText.Text == reachbuild);
+            bool reachdemo = (buildText.Text == reachdemobuild);
+            bool reachbuilds = (reach || reachdemo);
+
+            if (reach)
+                gameText.Paste("Halo: Reach Demo");
+            if (reachdemo)
+                gameText.Paste("Halo: Reach");
+
+            int[] iho_tm = LocalesBaseInts();
+
+            indexheaderoffset = iho_tm[0];
+            tagmask = iho_tm[1];
+
+            int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
+
+            GetLocales(path, globalsoffset, 0x290);
+        }
+
+        public void ReachFLLocales()
+        {
+            gameText.Paste("Halo: Reach (Force-Load)");
+
+            try
+            {
+                int[] iho_tm = LocalesBaseInts();
+
+                indexheaderoffset = iho_tm[0];
+                tagmask = iho_tm[1];
+
+                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
+
+                GetLocales(path, globalsoffset, 0x290);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        public void H4Locales()
+        {
+            gameText.Paste("Halo 4");
+
+            int imptagcount = MoreH4Values();
+
+            if (imptagcount == 0x7)
+            {
+                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
+
+                GetH4Locales(path, globalsoffset, 0x2BC);
+            }
+            if (imptagcount == 0x6)
+            {
+                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 5, tagmask);
+
+                GetH4Locales(path, globalsoffset, 0x8);
+            }
+        }
+
+        public void H4FLLocales()
+        {
+            gameText.Paste("Halo 4 (Force-Load)");
+
+            try
+            {
+                int imptagcount = MoreH4Values();
+
+                if (imptagcount == 0x7)
+                {
+                    int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
+
+                    GetH4Locales(path, globalsoffset, 0x2BC);
+                }
+                if (imptagcount == 0x6)
+                {
+                    int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 5, tagmask);
+
+                    GetH4Locales(path, globalsoffset, 0x8);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        public void H4NoRawLocales()
+        {
+            gameText.Paste("Halo 4");
+
+            path = directoryBox.Text;
+            r = new Reader(path);
+
+            int[] ints = LocalesBaseIntsH4();
+
+            int indexheaderaddress = ints[0];
+            int virtualbase = ints[1];
+
+            r.Position = 0x14;
+            int metaOffset = r.ReadInt32();
+
+            tagmask = (virtualbase - metaOffset);
+
+            indexheaderoffset = (indexheaderaddress - virtualbase + metaOffset);
+
+            int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
+
+            GetH4Locales(path, globalsoffset, 0x2BC);
+        }
+
+        public void H4NoRawFLLocales()
+        {
+            gameText.Paste("Halo 4 (No Raw) [Force-Load]");
+
+            try
+            {
+                path = directoryBox.Text;
+                r = new Reader(path);
+
+                int[] ints = LocalesBaseIntsH4();
+
+                int indexheaderaddress = ints[0];
+                int virtualbase = ints[1];
+
+                r.Position = 0x14;
+                int metaOffset = r.ReadInt32();
+
+                tagmask = (virtualbase - metaOffset);
+
+                indexheaderoffset = (indexheaderaddress - virtualbase + metaOffset);
+
+                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
+
+                GetH4Locales(path, globalsoffset, 0x2BC);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        //These are functions that the above functions call upon.
+        public int MoreH4Values()
+        {
+            int[] ints = LocalesBaseIntsH4();
+
+            int indexheaderaddress = ints[0];
+            int virtualbase = ints[1];
+            int assetdata = ints[2];
+            int assetdatasize = ints[3];
+
+            int metaOffset = (assetdata + assetdatasize);
+
+            tagmask = (virtualbase - metaOffset);
+
+            indexheaderoffset = (indexheaderaddress - virtualbase + metaOffset);
+
+            r.Position = indexheaderoffset + 0x10;
+            int imptagcount = r.ReadInt32();
+
+            return imptagcount;
+        }
+
+        public int[] LocalesBaseIntsH4()
+        {
+            path = directoryBox.Text;
+            r = new Reader(path);
+
+            ShowH4Values();
+
+            r.Position = 0x10;
+            int indexheaderaddress = r.ReadInt32();
+
+            r.Position = 0x18C;
+            string Internal = r.ReadString(0x20);
+            internalText.Paste(Internal);
+
+            r.Position = 0x2F8;
+            int virtualbase = r.ReadInt32();
+
+            r.Position = 0x480;
+            int assetdata = r.ReadInt32();
+
+            r.Position = 0x488;
+            int localemagic = r.ReadInt32();
+
+            r.Position = 0x498;
+            int assetdatasize = r.ReadInt32();
+
+            int[] ints = {
+                               indexheaderaddress,
+                               virtualbase,
+                               assetdata,
+                               assetdatasize
+                           };
+            return ints;
+        }
+
+        public int[] LocalesBaseInts()
+        {
+            path = directoryBox.Text;
+            r = new Reader(path);
+
+            HideH4Values();
+
+            r.Position = 0x10;
+            int indexheaderaddress = r.ReadInt32();
+
+            r.Position = 0x18C;
+            string Internal = r.ReadString(0x20);
+            internalText.Paste(Internal);
+
+            r.Position = 0x2E8;
+            int virtualbase = r.ReadInt32();
+
+            r.Position = 0x470;
+            int assetdata = r.ReadInt32();
+
+            r.Position = 0x478;
+            int localemagic = r.ReadInt32();
+
+            r.Position = 0x488;
+            int assetdatasize = r.ReadInt32();
+
+            int metaoff = (assetdata + assetdatasize);
+
+            tagmask = (virtualbase - metaoff);
+
+            indexheaderoffset = (indexheaderaddress - tagmask);
+
+            int[] iho_tm = {
+                               indexheaderoffset,
+                               tagmask
+                           };
+            return iho_tm;
+        }
 
         public void GetH3BLocales(string _path, int _globalsoffset)
         {
@@ -97,118 +718,6 @@ namespace ThirdGenLocales
             polishdataText.Paste(o + h3blocales[45].ToString("X"));
             polishdatasizeText.Paste(o + h3blocales[46].ToString("X"));
             polishindexText.Paste(o + h3blocales[47].ToString("X"));
-        }
-
-        public void HideH4Values()
-        {
-            blanklabel1.Hide();
-            h4line1.Hide();
-            h4line2.Hide();
-            h4line3.Hide();
-            h4line4.Hide();
-            h4line5.Hide();
-            h4line6.Hide();
-            h4langDani.Hide();
-            h4langDutc.Hide();
-            h4langFinn.Hide();
-            h4langNorw.Hide();
-            h4langRuss.Hide();
-            h4ind1.Hide();
-            h4ind2.Hide();
-            h4ind3.Hide();
-            h4ind4.Hide();
-            h4ind5.Hide();
-            h4dat1.Hide();
-            h4dat2.Hide();
-            h4dat3.Hide();
-            h4dat4.Hide();
-            h4dat5.Hide();
-            h4cnt1.Hide();
-            h4cnt2.Hide();
-            h4cnt3.Hide();
-            h4cnt4.Hide();
-            h4cnt5.Hide();
-            h4dsz1.Hide();
-            h4dsz2.Hide();
-            h4dsz3.Hide();
-            h4dsz4.Hide();
-            h4dsz5.Hide();
-            russiancountText.Hide();
-            russiandataText.Hide();
-            russiandatasizeText.Hide();
-            russianindexText.Hide();
-            danishcountText.Hide();
-            danishdataText.Hide();
-            danishdatasizeText.Hide();
-            danishindexText.Hide();
-            finnishcountText.Hide();
-            finnishdataText.Hide();
-            finnishdatasizeText.Hide();
-            finnishindexText.Hide();
-            dutchcountText.Hide();
-            dutchdataText.Hide();
-            dutchdatasizeText.Hide();
-            dutchindexText.Hide();
-            norwegiancountText.Hide();
-            norwegiandataText.Hide();
-            norwegiandatasizeText.Hide();
-            norwegianindexText.Hide();
-        }
-
-        public void ShowH4Values()
-        {
-            blanklabel1.Show();
-            h4line1.Show();
-            h4line2.Show();
-            h4line3.Show();
-            h4line4.Show();
-            h4line5.Show();
-            h4line6.Show();
-            h4langDani.Show();
-            h4langDutc.Show();
-            h4langFinn.Show();
-            h4langNorw.Show();
-            h4langRuss.Show();
-            h4ind1.Show();
-            h4ind2.Show();
-            h4ind3.Show();
-            h4ind4.Show();
-            h4ind5.Show();
-            h4dat1.Show();
-            h4dat2.Show();
-            h4dat3.Show();
-            h4dat4.Show();
-            h4dat5.Show();
-            h4cnt1.Show();
-            h4cnt2.Show();
-            h4cnt3.Show();
-            h4cnt4.Show();
-            h4cnt5.Show();
-            h4dsz1.Show();
-            h4dsz2.Show();
-            h4dsz3.Show();
-            h4dsz4.Show();
-            h4dsz5.Show();
-            russiancountText.Show();
-            russiandataText.Show();
-            russiandatasizeText.Show();
-            russianindexText.Show();
-            danishcountText.Show();
-            danishdataText.Show();
-            danishdatasizeText.Show();
-            danishindexText.Show();
-            finnishcountText.Show();
-            finnishdataText.Show();
-            finnishdatasizeText.Show();
-            finnishindexText.Show();
-            dutchcountText.Show();
-            dutchdataText.Show();
-            dutchdatasizeText.Show();
-            dutchindexText.Show();
-            norwegiancountText.Show();
-            norwegiandataText.Show();
-            norwegiandatasizeText.Show();
-            norwegianindexText.Show();
         }
 
         public void GetLocales(string _path, int _globalsoffset, int _globalsenglishcountoffset)
@@ -341,6 +850,119 @@ namespace ThirdGenLocales
             norwegianindexText.Paste(o + locales[67].ToString("X"));
         }
 
+        //Functions that change the form (Halo 4 has more languages then previous games).
+        public void HideH4Values()
+        {
+            blanklabel1.Hide();
+            h4line1.Hide();
+            h4line2.Hide();
+            h4line3.Hide();
+            h4line4.Hide();
+            h4line5.Hide();
+            h4line6.Hide();
+            h4langDani.Hide();
+            h4langDutc.Hide();
+            h4langFinn.Hide();
+            h4langNorw.Hide();
+            h4langRuss.Hide();
+            h4ind1.Hide();
+            h4ind2.Hide();
+            h4ind3.Hide();
+            h4ind4.Hide();
+            h4ind5.Hide();
+            h4dat1.Hide();
+            h4dat2.Hide();
+            h4dat3.Hide();
+            h4dat4.Hide();
+            h4dat5.Hide();
+            h4cnt1.Hide();
+            h4cnt2.Hide();
+            h4cnt3.Hide();
+            h4cnt4.Hide();
+            h4cnt5.Hide();
+            h4dsz1.Hide();
+            h4dsz2.Hide();
+            h4dsz3.Hide();
+            h4dsz4.Hide();
+            h4dsz5.Hide();
+            russiancountText.Hide();
+            russiandataText.Hide();
+            russiandatasizeText.Hide();
+            russianindexText.Hide();
+            danishcountText.Hide();
+            danishdataText.Hide();
+            danishdatasizeText.Hide();
+            danishindexText.Hide();
+            finnishcountText.Hide();
+            finnishdataText.Hide();
+            finnishdatasizeText.Hide();
+            finnishindexText.Hide();
+            dutchcountText.Hide();
+            dutchdataText.Hide();
+            dutchdatasizeText.Hide();
+            dutchindexText.Hide();
+            norwegiancountText.Hide();
+            norwegiandataText.Hide();
+            norwegiandatasizeText.Hide();
+            norwegianindexText.Hide();
+        }
+
+        public void ShowH4Values()
+        {
+            blanklabel1.Show();
+            h4line1.Show();
+            h4line2.Show();
+            h4line3.Show();
+            h4line4.Show();
+            h4line5.Show();
+            h4line6.Show();
+            h4langDani.Show();
+            h4langDutc.Show();
+            h4langFinn.Show();
+            h4langNorw.Show();
+            h4langRuss.Show();
+            h4ind1.Show();
+            h4ind2.Show();
+            h4ind3.Show();
+            h4ind4.Show();
+            h4ind5.Show();
+            h4dat1.Show();
+            h4dat2.Show();
+            h4dat3.Show();
+            h4dat4.Show();
+            h4dat5.Show();
+            h4cnt1.Show();
+            h4cnt2.Show();
+            h4cnt3.Show();
+            h4cnt4.Show();
+            h4cnt5.Show();
+            h4dsz1.Show();
+            h4dsz2.Show();
+            h4dsz3.Show();
+            h4dsz4.Show();
+            h4dsz5.Show();
+            russiancountText.Show();
+            russiandataText.Show();
+            russiandatasizeText.Show();
+            russianindexText.Show();
+            danishcountText.Show();
+            danishdataText.Show();
+            danishdatasizeText.Show();
+            danishindexText.Show();
+            finnishcountText.Show();
+            finnishdataText.Show();
+            finnishdatasizeText.Show();
+            finnishindexText.Show();
+            dutchcountText.Show();
+            dutchdataText.Show();
+            dutchdatasizeText.Show();
+            dutchindexText.Show();
+            norwegiancountText.Show();
+            norwegiandataText.Show();
+            norwegiandatasizeText.Show();
+            norwegianindexText.Show();
+        }
+
         public void ClearBoxes()
         {
             directoryBox.Clear();
@@ -417,313 +1039,26 @@ namespace ThirdGenLocales
             norwegianindexText.Clear();
         }
 
-        public LocaleInfo()
-        {
-            InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
+        //Error Dialogs
         public void NoLocalesDialog()
         {
             MessageBox.Show("No locale info could be found.", "Error: No Locales");
         }
 
-        public void GetLocales()
+        public void Non3rdGenDialog()
         {
-            ClearBoxes();
-
-            directoryBox.Paste(path);
-
-            r = new Reader(path);
-            r.Position = 0x0;
-            string headmagic = r.ReadString(0x4);
-
-            if (headmagic == "head")
-            {
-                r.Position = 0x10;
-                int indexheaderaddress = r.ReadInt32();
-
-                r.Position = 0x11C;
-                string build = r.ReadString(0x20);
-
-                buildText.Paste(build);
-
-                r.Position = 0x13C;
-                short type = r.ReadInt16();
-                bool ingamemap = (type != 0x3 && type != 0x4);
-
-                bool halo3beta = (buildText.Text == halo3betabuild);
-
-                bool halo3 = (buildText.Text == halo3build);
-                bool halo3review = (buildText.Text == halo3reviewbuild);
-                bool halo3epsilon = (buildText.Text == halo3epsilonbuild);
-                bool halo3mythic = (buildText.Text == halo3mythicbuild);
-
-                bool halo3odst = (buildText.Text == halo3odstbuild);
-
-                bool reachprebeta = (buildText.Text == reachprebetabuild);
-                bool reachbeta = (buildText.Text == reachbetabuild);
-                bool reachbetas = (reachprebeta || reachbeta);
-
-                bool reach = (buildText.Text == reachbuild);
-                bool reachdemo = (buildText.Text == reachdemobuild);
-                bool reachbuilds = (reach || reachdemo);
-
-                bool halo4tu0 = (buildText.Text == halo4build);
-                bool halo4tu2 = (buildText.Text == halo4tu2build);
-                bool halo4tu3 = (buildText.Text == halo4tu3build);
-                bool halo4tu4 = (buildText.Text == halo4tu4build);
-                bool halo4tu5 = (buildText.Text == halo4tu5build);
-                bool halo4tu6 = (buildText.Text == halo4tu6build);
-                bool halo4tu7 = (buildText.Text == halo4tu7build);
-
-                bool allhalo3noODST = (halo3 || halo3mythic || halo3review || halo3epsilon);
-                bool allhalo3builds = (allhalo3noODST || halo3odst);
-                bool allreachbuilds = (reachbetas || reachbuilds);
-                bool halo4 = (halo4tu0 || halo4tu2 || halo4tu3 || halo4tu4 || halo4tu5 || halo4tu6 || halo4tu7);
-
-                bool thirdgennoH3B = (allhalo3builds || allreachbuilds || halo4);
-
-                bool thirdgen = (thirdgennoH3B || halo3beta);
-
-                IndexHeaderFunctions IHF = new IndexHeaderFunctions();
-
-                if (!thirdgen)
-                {
-                    UnrecognizedBuild UB = new UnrecognizedBuild(buildText.Text);
-                    UB.ShowDialog();
-                }
-
-                    if (!halo4)
-                    {
-                        HideH4Values();
-                    }
-
-                    if (halo3beta)
-                    {
-                        gameText.Paste("Halo 3 Beta");
-
-                        r.Position = 0x194;
-                        string Internal = r.ReadString(0x20);
-                        internalText.Paste(Internal);
-
-                        r.Position = 0x14;
-                        int metaoff = r.ReadInt32();
-
-                        r.Position = 0x2F0;
-                        int virtualbase = r.ReadInt32();
-
-                        tagmask = (virtualbase - metaoff);
-
-                        indexheaderoffset = (indexheaderaddress - tagmask);
-
-                        int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 4, tagmask);
-
-                        if (ingamemap)
-                        {
-                            GetH3BLocales(path, globalsoffset);
-                        }
-
-                        if (!ingamemap)
-                        {
-                            NoLocalesDialog();
-                        }
-                    }
-
-                    if (allhalo3builds || allreachbuilds)
-                    {
-                        if (halo3)
-                            gameText.Paste("Halo 3");
-                        if (halo3review)
-                            gameText.Paste("Halo 3 Review");
-                        if (halo3epsilon)
-                            gameText.Paste("Halo 3 Epsilon");
-                        if (halo3mythic)
-                            gameText.Paste("Halo 3 Mythic");
-                        if (halo3odst)
-                            gameText.Paste("Halo 3: ODST");
-                        if (reachprebeta)
-                            gameText.Paste("Halo: Reach Pre-Beta");
-                        if (reachbeta)
-                            gameText.Paste("Halo: Reach Beta");
-                        if (reach)
-                            gameText.Paste("Halo: Reach Demo");
-                        if (reachdemo)
-                            gameText.Paste("Halo: Reach");
-
-                        r.Position = 0x18C;
-                        string Internal = r.ReadString(0x20);
-                        internalText.Paste(Internal);
-
-                        r.Position = 0x2E8;
-                        int virtualbase = r.ReadInt32();
-
-                        r.Position = 0x470;
-                        int assetdata = r.ReadInt32();
-                        
-                        r.Position = 0x478;
-                        int localemagic = r.ReadInt32();
-
-                        r.Position = 0x488;
-                        int assetdatasize = r.ReadInt32();
-
-                        int metaoff = (assetdata + assetdatasize);
-
-                        tagmask = (virtualbase - metaoff);
-
-                        indexheaderoffset = (indexheaderaddress - tagmask);
-
-                        if (ingamemap)
-                        {
-                            if (allhalo3builds)
-                            {
-                                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 5, tagmask);
-
-                                if (allhalo3noODST)
-                                {
-                                    GetLocales(path, globalsoffset, 0x1C4);
-                                }
-                                if (halo3odst)
-                                {
-                                    GetLocales(path, globalsoffset, 0x1FC);
-                                }
-                            }
-                            if (allreachbuilds)
-                            {
-                                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
-
-                                if (reachbetas)
-                                {
-                                    GetLocales(path, globalsoffset, 0x240);
-                                }
-                                if (reachbuilds)
-                                {
-                                    GetLocales(path, globalsoffset, 0x290);
-                                }
-                            }
-                        }
-                        if (!ingamemap)
-                        {
-                            NoLocalesDialog();
-                        }
-                    }
-                    if (halo4)
-                    {
-                        ShowH4Values();
-
-                        gameText.Paste("Halo 4");
-
-                        r.Position = 0x18C;
-                        string Internal = r.ReadString(0x20);
-                        internalText.Paste(Internal);
-
-                        r.Position = 0x2F8;
-                        int virtualbase = r.ReadInt32();
-
-                        r.Position = 0x480;
-                        int assetdata = r.ReadInt32();
-
-                        r.Position = 0x488;
-                        int localemagic = r.ReadInt32();
-
-                        r.Position = 0x498;
-                        int assetdatasize = r.ReadInt32();
-
-                        if (ingamemap)
-                        {
-                            if (localemagic != 0)
-                            {
-                                int metaOffset = (assetdata + assetdatasize);
-
-                                tagmask = (virtualbase - metaOffset);
-
-                                indexheaderoffset = (indexheaderaddress - virtualbase + metaOffset);
-
-                                r.Position = indexheaderoffset + 0x10;
-                                int imptagcount = r.ReadInt32();
-
-                                if (ingamemap)
-                                {
-                                    // regular maps
-                                    if (imptagcount == 0x7)
-                                    {
-                                        int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
-
-                                        GetH4Locales(path, globalsoffset, 0x2BC);
-                                    }
-
-                                    // patchmaps
-                                    if (imptagcount == 0x6)
-                                    {
-                                        int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 5, tagmask);
-
-                                        GetH4Locales(path, globalsoffset, 0x8);
-                                    }
-                                }
-                            }
-
-                            // maps without raw
-                            if (localemagic == 0)
-                            {
-                                r.Position = 0x14;
-                                int metaOffset = r.ReadInt32();
-
-                                tagmask = (virtualbase - metaOffset);
-
-                                indexheaderoffset = (indexheaderaddress - virtualbase + metaOffset);
-
-                                int globalsoffset = IHF.ImportantTagOffsetFinder(indexheaderoffset, path, 6, tagmask);
-
-                                GetH4Locales(path, globalsoffset, 0x2BC);
-                            }
-                        }
-
-                        if (!ingamemap)
-                        {
-                            NoLocalesDialog();
-                        }
-
-                    }
-
-            }
-
-            if (headmagic == "daeh")
-            {
-                MessageBox.Show("Only Third Generation map files are supported.", "Error: Not Third Gen");
-            }
-
-            if (headmagic != "head" && headmagic != "daeh")
-            {
-                MessageBox.Show("Unrecognized Header Magic! Only Third Generation map files are supported.", "Error: Unrecognized Header Magic");
-            }
+            MessageBox.Show("Only Third Generation map files are supported.", "Error: Not Third Gen");
         }
 
-        private void Form1_DragOver(object sender, DragEventArgs e)
+        public void BadHeaderMagDialog()
         {
-            e.Effect = DragDropEffects.All;
+            MessageBox.Show("Unrecognized Header Magic! Only Third Generation map files are supported.", "Error: Unrecognized Header Magic");
         }
 
-        private void browseButton_Click(object sender, EventArgs e)
+        public void UnrecognizedBuildDialog()
         {
-            OpenFileDialog open = new OpenFileDialog();
-            open.Filter = "3rd Gen Blam .map Files (*.map)|*.map";
-
-            if (open.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                path = open.FileName;
-                GetLocales();
-            }
-        }
-
-        private void Form1_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
-            path = files[files.Length - 1];
-            GetLocales();
+            UnrecognizedBuild UB = new UnrecognizedBuild(buildText.Text, this);
+            UB.ShowDialog();
         }
     }
 }

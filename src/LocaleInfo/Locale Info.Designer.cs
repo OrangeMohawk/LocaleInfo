@@ -236,17 +236,17 @@
             // buildText
             // 
             this.buildText.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.buildText.Location = new System.Drawing.Point(443, 468);
+            this.buildText.Location = new System.Drawing.Point(466, 468);
             this.buildText.Name = "buildText";
             this.buildText.ReadOnly = true;
-            this.buildText.Size = new System.Drawing.Size(188, 20);
+            this.buildText.Size = new System.Drawing.Size(180, 20);
             this.buildText.TabIndex = 72;
             // 
             // buildLabel
             // 
             this.buildLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.buildLabel.AutoSize = true;
-            this.buildLabel.Location = new System.Drawing.Point(400, 470);
+            this.buildLabel.Location = new System.Drawing.Point(427, 470);
             this.buildLabel.Name = "buildLabel";
             this.buildLabel.Size = new System.Drawing.Size(30, 13);
             this.buildLabel.TabIndex = 0;
@@ -255,17 +255,17 @@
             // gameText
             // 
             this.gameText.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.gameText.Location = new System.Drawing.Point(282, 468);
+            this.gameText.Location = new System.Drawing.Point(262, 468);
             this.gameText.Name = "gameText";
             this.gameText.ReadOnly = true;
-            this.gameText.Size = new System.Drawing.Size(112, 20);
+            this.gameText.Size = new System.Drawing.Size(155, 20);
             this.gameText.TabIndex = 71;
             // 
             // gameLabel
             // 
             this.gameLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.gameLabel.AutoSize = true;
-            this.gameLabel.Location = new System.Drawing.Point(231, 471);
+            this.gameLabel.Location = new System.Drawing.Point(215, 471);
             this.gameLabel.Name = "gameLabel";
             this.gameLabel.Size = new System.Drawing.Size(35, 13);
             this.gameLabel.TabIndex = 0;
@@ -526,7 +526,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(181, 82);
+            this.label13.Location = new System.Drawing.Point(182, 82);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(73, 20);
             this.label13.TabIndex = 0;
@@ -691,7 +691,7 @@
             // 
             this.label24.AutoSize = true;
             this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label24.Location = new System.Drawing.Point(182, 161);
+            this.label24.Location = new System.Drawing.Point(183, 161);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(74, 20);
             this.label24.TabIndex = 0;
@@ -943,7 +943,7 @@
             // 
             this.label41.AutoSize = true;
             this.label41.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label41.Location = new System.Drawing.Point(604, 240);
+            this.label41.Location = new System.Drawing.Point(605, 240);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(66, 20);
             this.label41.TabIndex = 0;
@@ -1107,7 +1107,7 @@
             // 
             this.label52.AutoSize = true;
             this.label52.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label52.Location = new System.Drawing.Point(138, 319);
+            this.label52.Location = new System.Drawing.Point(143, 319);
             this.label52.Name = "label52";
             this.label52.Size = new System.Drawing.Size(163, 20);
             this.label52.TabIndex = 0;
@@ -1117,7 +1117,7 @@
             // 
             this.label53.AutoSize = true;
             this.label53.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label53.Location = new System.Drawing.Point(557, 319);
+            this.label53.Location = new System.Drawing.Point(564, 319);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(157, 20);
             this.label53.TabIndex = 0;
@@ -1281,7 +1281,7 @@
             // 
             this.label64.AutoSize = true;
             this.label64.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label64.Location = new System.Drawing.Point(165, 398);
+            this.label64.Location = new System.Drawing.Point(168, 398);
             this.label64.Name = "label64";
             this.label64.Size = new System.Drawing.Size(101, 20);
             this.label64.TabIndex = 0;
@@ -1291,7 +1291,7 @@
             // 
             this.label65.AutoSize = true;
             this.label65.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label65.Location = new System.Drawing.Point(607, 398);
+            this.label65.Location = new System.Drawing.Point(608, 398);
             this.label65.Name = "label65";
             this.label65.Size = new System.Drawing.Size(57, 20);
             this.label65.TabIndex = 0;
@@ -1407,7 +1407,7 @@
             // 
             this.h4langRuss.AutoSize = true;
             this.h4langRuss.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.h4langRuss.Location = new System.Drawing.Point(179, 477);
+            this.h4langRuss.Location = new System.Drawing.Point(182, 477);
             this.h4langRuss.Name = "h4langRuss";
             this.h4langRuss.Size = new System.Drawing.Size(74, 20);
             this.h4langRuss.TabIndex = 0;
@@ -1495,7 +1495,7 @@
             // 
             this.h4langDani.AutoSize = true;
             this.h4langDani.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.h4langDani.Location = new System.Drawing.Point(604, 479);
+            this.h4langDani.Location = new System.Drawing.Point(606, 479);
             this.h4langDani.Name = "h4langDani";
             this.h4langDani.Size = new System.Drawing.Size(65, 20);
             this.h4langDani.TabIndex = 0;
@@ -1601,7 +1601,7 @@
             // 
             this.h4langFinn.AutoSize = true;
             this.h4langFinn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.h4langFinn.Location = new System.Drawing.Point(182, 557);
+            this.h4langFinn.Location = new System.Drawing.Point(184, 557);
             this.h4langFinn.Name = "h4langFinn";
             this.h4langFinn.Size = new System.Drawing.Size(67, 20);
             this.h4langFinn.TabIndex = 0;
@@ -1774,7 +1774,7 @@
             // 
             this.h4langDutc.AutoSize = true;
             this.h4langDutc.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.h4langDutc.Location = new System.Drawing.Point(610, 557);
+            this.h4langDutc.Location = new System.Drawing.Point(608, 557);
             this.h4langDutc.Name = "h4langDutc";
             this.h4langDutc.Size = new System.Drawing.Size(57, 20);
             this.h4langDutc.TabIndex = 0;
@@ -1785,7 +1785,7 @@
             // 
             this.h4langNorw.AutoSize = true;
             this.h4langNorw.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.h4langNorw.Location = new System.Drawing.Point(360, 641);
+            this.h4langNorw.Location = new System.Drawing.Point(367, 641);
             this.h4langNorw.Name = "h4langNorw";
             this.h4langNorw.Size = new System.Drawing.Size(93, 20);
             this.h4langNorw.TabIndex = 0;
@@ -2035,9 +2035,9 @@
             this.MinimumSize = new System.Drawing.Size(460, 395);
             this.Name = "LocaleInfo";
             this.Text = "LocaleInfo";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
-            this.DragOver += new System.Windows.Forms.DragEventHandler(this.Form1_DragOver);
+            this.Load += new System.EventHandler(this.Form_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form_DragDrop);
+            this.DragOver += new System.Windows.Forms.DragEventHandler(this.Form_DragOver);
             this.panel.ResumeLayout(false);
             this.panel.PerformLayout();
             this.ResumeLayout(false);

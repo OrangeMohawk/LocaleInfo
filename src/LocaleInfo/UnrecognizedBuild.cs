@@ -12,23 +12,14 @@ namespace BadBuild
 {
     public partial class UnrecognizedBuild : Form
     {
-        ThirdGenLocales.LocaleInfo LI = new ThirdGenLocales.LocaleInfo();
+        ThirdGenLocales.LocaleInfo LI;
 
-        public UnrecognizedBuild(string _build)
+
+        public UnrecognizedBuild(string _build, ThirdGenLocales.LocaleInfo info)
         {
             InitializeComponent();
+            LI = info;
             ChangeLabelText(_build);
-
-            // Temporary "fix" until I can figure out force-loading as a different engine.
-            overrideLabel.Hide();
-            loadH3BButton.Hide();
-            loadH3Button.Hide();
-            loadODSTButton.Hide();
-            loadReachBetaButton.Hide();
-            loadReachButton.Hide();
-            loadH4Button.Hide();
-            loadH4NoRawButton.Hide();
-            loadNoneButton.Location = new System.Drawing.Point(128, 75);
         }
 
         public void ChangeLabelText(string _build)
@@ -44,43 +35,43 @@ namespace BadBuild
         private void loadH3BButton_Click(object sender, EventArgs e)
         {
             ActiveForm.Close();
-            MessageBox.Show("Coming soon");
+            LI.H3BFLLocales();
         }
 
         private void loadH3Button_Click(object sender, EventArgs e)
         {
             ActiveForm.Close();
-            MessageBox.Show("Coming soon");
+            LI.H3FLLocales();
         }
 
         private void loadODSTButton_Click(object sender, EventArgs e)
         {
             ActiveForm.Close();
-            MessageBox.Show("Coming soon");
+            LI.ODSTFLLocales();
         }
 
         private void loadReachBetaButton_Click(object sender, EventArgs e)
         {
             ActiveForm.Close();
-            MessageBox.Show("Coming soon");
+            LI.ReachBetaFLLocales();
         }
 
         private void loadReachButton_Click(object sender, EventArgs e)
         {
             ActiveForm.Close();
-            MessageBox.Show("Coming soon");
+            LI.ReachFLLocales();
         }
 
         private void loadH4Button_Click(object sender, EventArgs e)
         {
             ActiveForm.Close();
-            MessageBox.Show("Coming soon");
+            LI.H4FLLocales();
         }
 
         private void loadH4NoRawButton_Click(object sender, EventArgs e)
         {
             ActiveForm.Close();
-            MessageBox.Show("Coming soon");
+            LI.H4NoRawFLLocales();
         }
 
     }

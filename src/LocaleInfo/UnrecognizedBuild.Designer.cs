@@ -152,7 +152,7 @@
             this.loadNoneButton.Name = "loadNoneButton";
             this.loadNoneButton.Size = new System.Drawing.Size(144, 23);
             this.loadNoneButton.TabIndex = 1;
-            this.loadNoneButton.Text = "Close";
+            this.loadNoneButton.Text = "No Thanks";
             this.loadNoneButton.UseVisualStyleBackColor = true;
             this.loadNoneButton.Click += new System.EventHandler(this.loadNoneButton_Click);
             // 
@@ -182,7 +182,6 @@
             this.MinimumSize = new System.Drawing.Size(410, 150);
             this.Name = "UnrecognizedBuild";
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.Text = "Error: Unrecognized Build";
             this.ResumeLayout(false);
             this.PerformLayout();
