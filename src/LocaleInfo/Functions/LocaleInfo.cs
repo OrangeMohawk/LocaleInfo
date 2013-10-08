@@ -233,11 +233,12 @@ namespace Functions
             return Reachlocales;
         }
 
-        enum gameglobalslocalestart : int { Halo3 = 0x1C4, ODST = 0x1FC, ReachBeta = 0x240, Reach = 0x290 };
-
         public int[] GetLoc(string _path, int _globalsoffset, int globalsenglishcountoffset)
         {
             Reader r = new Reader(_path);
+
+            r.Position = 0x478;
+            int localemagic = r.ReadInt32();
 
             int englishcountoffset = (_globalsoffset + globalsenglishcountoffset);
 
@@ -248,10 +249,12 @@ namespace Functions
             int englishdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x8;
-            int englishindex = r.ReadInt32();
+            int _englishindex = r.ReadInt32();
+            int englishindex = _englishindex + localemagic;
 
             r.Position = englishcountoffset + 0xC;
-            int englishdata = r.ReadInt32();
+            int _englishdata = r.ReadInt32();
+            int englishdata = _englishdata + localemagic;
 
             r.Position = englishcountoffset + 0x44;
             int japanesecount = r.ReadInt32();
@@ -260,10 +263,12 @@ namespace Functions
             int japanesedatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x4C;
-            int japaneseindex = r.ReadInt32();
+            int _japaneseindex = r.ReadInt32();
+            int japaneseindex = _japaneseindex + localemagic;
 
             r.Position = englishcountoffset + 0x50;
-            int japanesedata = r.ReadInt32();
+            int _japanesedata = r.ReadInt32();
+            int japanesedata = _japanesedata + localemagic;
 
             r.Position = englishcountoffset + 0x88;
             int germancount = r.ReadInt32();
@@ -272,10 +277,12 @@ namespace Functions
             int germandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x90;
-            int germanindex = r.ReadInt32();
+            int _germanindex = r.ReadInt32();
+            int germanindex = _germanindex + localemagic;
 
             r.Position = englishcountoffset + 0x94;
-            int germandata = r.ReadInt32();
+            int _germandata = r.ReadInt32();
+            int germandata = _germandata + localemagic;
 
             r.Position = englishcountoffset + 0xCC;
             int frenchcount = r.ReadInt32();
@@ -284,10 +291,12 @@ namespace Functions
             int frenchdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0xD4;
-            int frenchindex = r.ReadInt32();
+            int _frenchindex = r.ReadInt32();
+            int frenchindex = _frenchindex + localemagic;
 
             r.Position = englishcountoffset + 0xD8;
-            int frenchdata = r.ReadInt32();
+            int _frenchdata = r.ReadInt32();
+            int frenchdata = _frenchdata + localemagic;
 
             r.Position = englishcountoffset + 0x110;
             int spanishcount = r.ReadInt32();
@@ -296,10 +305,12 @@ namespace Functions
             int spanishdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x118;
-            int spanishindex = r.ReadInt32();
+            int _spanishindex = r.ReadInt32();
+            int spanishindex = _spanishindex + localemagic;
 
             r.Position = englishcountoffset + 0x11C;
-            int spanishdata = r.ReadInt32();
+            int _spanishdata = r.ReadInt32();
+            int spanishdata = _spanishdata + localemagic;
 
             r.Position = englishcountoffset + 0x154;
             int mexicancount = r.ReadInt32();
@@ -308,10 +319,12 @@ namespace Functions
             int mexicandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x15C;
-            int mexicanindex = r.ReadInt32();
+            int _mexicanindex = r.ReadInt32();
+            int mexicanindex = _mexicanindex + localemagic;
 
             r.Position = englishcountoffset + 0x160;
-            int mexicandata = r.ReadInt32();
+            int _mexicandata = r.ReadInt32();
+            int mexicandata = _mexicandata + localemagic;
 
             r.Position = englishcountoffset + 0x198;
             int italiancount = r.ReadInt32();
@@ -320,10 +333,12 @@ namespace Functions
             int italiandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x1A0;
-            int italianindex = r.ReadInt32();
+            int _italianindex = r.ReadInt32();
+            int italianindex = _italianindex + localemagic;
 
             r.Position = englishcountoffset + 0x1A4;
-            int italiandata = r.ReadInt32();
+            int _italiandata = r.ReadInt32();
+            int italiandata = _italiandata + localemagic;
 
             r.Position = englishcountoffset + 0x1DC;
             int koreancount = r.ReadInt32();
@@ -332,10 +347,12 @@ namespace Functions
             int koreandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x1E4;
-            int koreanindex = r.ReadInt32();
+            int _koreanindex = r.ReadInt32();
+            int koreanindex = _koreanindex + localemagic;
 
             r.Position = englishcountoffset + 0x1E8;
-            int koreandata = r.ReadInt32();
+            int _koreandata = r.ReadInt32();
+            int koreandata = _koreandata + localemagic;
 
             r.Position = englishcountoffset + 0x220;
             int chintradcount = r.ReadInt32();
@@ -344,10 +361,12 @@ namespace Functions
             int chintraddatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x228;
-            int chintradindex = r.ReadInt32();
+            int _chintradindex = r.ReadInt32();
+            int chintradindex = _chintradindex + localemagic;
 
             r.Position = englishcountoffset + 0x22C;
-            int chintraddata = r.ReadInt32();
+            int _chintraddata = r.ReadInt32();
+            int chintraddata = _chintraddata + localemagic;
 
             r.Position = englishcountoffset + 0x264;
             int chinsimpcount = r.ReadInt32();
@@ -356,10 +375,12 @@ namespace Functions
             int chinsimpdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x26C;
-            int chinsimpindex = r.ReadInt32();
+            int _chinsimpindex = r.ReadInt32();
+            int chinsimpindex = _chinsimpindex + localemagic;
 
             r.Position = englishcountoffset + 0x270;
-            int chinsimpdata = r.ReadInt32();
+            int _chinsimpdata = r.ReadInt32();
+            int chinsimpdata = _chinsimpdata + localemagic;
 
             r.Position = englishcountoffset + 0x2A8;
             int portuguesecount = r.ReadInt32();
@@ -368,10 +389,12 @@ namespace Functions
             int portuguesedatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x2B0;
-            int portugueseindex = r.ReadInt32();
+            int _portugueseindex = r.ReadInt32();
+            int portugueseindex = _portugueseindex + localemagic;
 
             r.Position = englishcountoffset + 0x2B4;
-            int portuguesedata = r.ReadInt32();
+            int _portuguesedata = r.ReadInt32();
+            int portuguesedata = _portuguesedata + localemagic;
 
             r.Position = englishcountoffset + 0x2EC;
             int polishcount = r.ReadInt32();
@@ -380,10 +403,12 @@ namespace Functions
             int polishdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x2F4;
-            int polishindex = r.ReadInt32();
+            int _polishindex = r.ReadInt32();
+            int polishindex = _polishindex + localemagic;
 
             r.Position = englishcountoffset + 0x2F8;
-            int polishdata = r.ReadInt32();
+            int _polishdata = r.ReadInt32();
+            int polishdata = _polishdata + localemagic;
 
             int[] localeinfo = {
                          englishcount,
@@ -454,6 +479,9 @@ namespace Functions
         {
             Reader r = new Reader(_path);
 
+            r.Position = 0x488;
+            int localemagic = r.ReadInt32();
+
             int englishcountoffset = (_globalsoffset + globalsenglishcountoffset);
 
             r.Position = englishcountoffset;
@@ -463,10 +491,12 @@ namespace Functions
             int englishdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x8;
-            int englishindex = r.ReadInt32();
+            int _englishindex = r.ReadInt32();
+            int englishindex = _englishindex + localemagic;
 
             r.Position = englishcountoffset + 0xC;
-            int englishdata = r.ReadInt32();
+            int _englishdata = r.ReadInt32();
+            int englishdata = _englishdata + localemagic;
 
             r.Position = englishcountoffset + 0x44;
             int japanesecount = r.ReadInt32();
@@ -475,10 +505,12 @@ namespace Functions
             int japanesedatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x4C;
-            int japaneseindex = r.ReadInt32();
+            int _japaneseindex = r.ReadInt32();
+            int japaneseindex = _japaneseindex + localemagic;
 
             r.Position = englishcountoffset + 0x50;
-            int japanesedata = r.ReadInt32();
+            int _japanesedata = r.ReadInt32();
+            int japanesedata = _japanesedata + localemagic;
 
             r.Position = englishcountoffset + 0x88;
             int germancount = r.ReadInt32();
@@ -487,10 +519,12 @@ namespace Functions
             int germandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x90;
-            int germanindex = r.ReadInt32();
+            int _germanindex = r.ReadInt32();
+            int germanindex = _germanindex + localemagic;
 
             r.Position = englishcountoffset + 0x94;
-            int germandata = r.ReadInt32();
+            int _germandata = r.ReadInt32();
+            int germandata = _germandata + localemagic;
 
             r.Position = englishcountoffset + 0xCC;
             int frenchcount = r.ReadInt32();
@@ -499,10 +533,12 @@ namespace Functions
             int frenchdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0xD4;
-            int frenchindex = r.ReadInt32();
+            int _frenchindex = r.ReadInt32();
+            int frenchindex = _frenchindex + localemagic;
 
             r.Position = englishcountoffset + 0xD8;
-            int frenchdata = r.ReadInt32();
+            int _frenchdata = r.ReadInt32();
+            int frenchdata = _frenchdata + localemagic;
 
             r.Position = englishcountoffset + 0x110;
             int spanishcount = r.ReadInt32();
@@ -511,10 +547,12 @@ namespace Functions
             int spanishdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x118;
-            int spanishindex = r.ReadInt32();
+            int _spanishindex = r.ReadInt32();
+            int spanishindex = _spanishindex + localemagic;
 
             r.Position = englishcountoffset + 0x11C;
-            int spanishdata = r.ReadInt32();
+            int _spanishdata = r.ReadInt32();
+            int spanishdata = _spanishdata + localemagic;
 
             r.Position = englishcountoffset + 0x154;
             int mexicancount = r.ReadInt32();
@@ -523,10 +561,12 @@ namespace Functions
             int mexicandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x15C;
-            int mexicanindex = r.ReadInt32();
+            int _mexicanindex = r.ReadInt32();
+            int mexicanindex = _mexicanindex + localemagic;
 
             r.Position = englishcountoffset + 0x160;
-            int mexicandata = r.ReadInt32();
+            int _mexicandata = r.ReadInt32();
+            int mexicandata = _mexicandata + localemagic;
 
             r.Position = englishcountoffset + 0x198;
             int italiancount = r.ReadInt32();
@@ -535,10 +575,12 @@ namespace Functions
             int italiandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x1A0;
-            int italianindex = r.ReadInt32();
+            int _italianindex = r.ReadInt32();
+            int italianindex = _italianindex + localemagic;
 
             r.Position = englishcountoffset + 0x1A4;
-            int italiandata = r.ReadInt32();
+            int _italiandata = r.ReadInt32();
+            int italiandata = _italiandata + localemagic;
 
             r.Position = englishcountoffset + 0x1DC;
             int koreancount = r.ReadInt32();
@@ -547,10 +589,12 @@ namespace Functions
             int koreandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x1E4;
-            int koreanindex = r.ReadInt32();
+            int _koreanindex = r.ReadInt32();
+            int koreanindex = _koreanindex + localemagic;
 
             r.Position = englishcountoffset + 0x1E8;
-            int koreandata = r.ReadInt32();
+            int _koreandata = r.ReadInt32();
+            int koreandata = _koreandata + localemagic;
 
             r.Position = englishcountoffset + 0x220;
             int chintradcount = r.ReadInt32();
@@ -559,10 +603,12 @@ namespace Functions
             int chintraddatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x228;
-            int chintradindex = r.ReadInt32();
+            int _chintradindex = r.ReadInt32();
+            int chintradindex = _chintradindex + localemagic;
 
             r.Position = englishcountoffset + 0x22C;
-            int chintraddata = r.ReadInt32();
+            int _chintraddata = r.ReadInt32();
+            int chintraddata = _chintraddata + localemagic;
 
             r.Position = englishcountoffset + 0x264;
             int chinsimpcount = r.ReadInt32();
@@ -571,10 +617,12 @@ namespace Functions
             int chinsimpdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x26C;
-            int chinsimpindex = r.ReadInt32();
+            int _chinsimpindex = r.ReadInt32();
+            int chinsimpindex = _chinsimpindex + localemagic;
 
             r.Position = englishcountoffset + 0x270;
-            int chinsimpdata = r.ReadInt32();
+            int _chinsimpdata = r.ReadInt32();
+            int chinsimpdata = _chinsimpdata + localemagic;
 
             r.Position = englishcountoffset + 0x2A8;
             int portuguesecount = r.ReadInt32();
@@ -583,10 +631,12 @@ namespace Functions
             int portuguesedatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x2B0;
-            int portugueseindex = r.ReadInt32();
+            int _portugueseindex = r.ReadInt32();
+            int portugueseindex = _portugueseindex + localemagic;
 
             r.Position = englishcountoffset + 0x2B4;
-            int portuguesedata = r.ReadInt32();
+            int _portuguesedata = r.ReadInt32();
+            int portuguesedata = _portuguesedata + localemagic;
 
             r.Position = englishcountoffset + 0x2EC;
             int polishcount = r.ReadInt32();
@@ -595,10 +645,12 @@ namespace Functions
             int polishdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x2F4;
-            int polishindex = r.ReadInt32();
+            int _polishindex = r.ReadInt32();
+            int polishindex = _polishindex + localemagic;
 
             r.Position = englishcountoffset + 0x2F8;
-            int polishdata = r.ReadInt32();
+            int _polishdata = r.ReadInt32();
+            int polishdata = _polishdata + localemagic;
 
             r.Position = englishcountoffset + 0x330;
             int russiancount = r.ReadInt32();
@@ -607,10 +659,12 @@ namespace Functions
             int russiandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x338;
-            int russianindex = r.ReadInt32();
+            int _russianindex = r.ReadInt32();
+            int russianindex = _russianindex + localemagic;
 
             r.Position = englishcountoffset + 0x33C;
-            int russiandata = r.ReadInt32();
+            int _russiandata = r.ReadInt32();
+            int russiandata = _russiandata + localemagic;
 
             r.Position = englishcountoffset + 0x374;
             int danishcount = r.ReadInt32();
@@ -619,10 +673,12 @@ namespace Functions
             int danishdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x37C;
-            int danishindex = r.ReadInt32();
+            int _danishindex = r.ReadInt32();
+            int danishindex = _danishindex + localemagic;
 
             r.Position = englishcountoffset + 0x380;
-            int danishdata = r.ReadInt32();
+            int _danishdata = r.ReadInt32();
+            int danishdata = _danishdata + localemagic;
 
             r.Position = englishcountoffset + 0x3B8;
             int finnishcount = r.ReadInt32();
@@ -631,10 +687,12 @@ namespace Functions
             int finnishdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x3C0;
-            int finnishindex = r.ReadInt32();
+            int _finnishindex = r.ReadInt32();
+            int finnishindex = _finnishindex + localemagic;
 
             r.Position = englishcountoffset + 0x3C4;
-            int finnishdata = r.ReadInt32();
+            int _finnishdata = r.ReadInt32();
+            int finnishdata = _finnishdata + localemagic;
 
             r.Position = englishcountoffset + 0x3FC;
             int dutchcount = r.ReadInt32();
@@ -643,10 +701,12 @@ namespace Functions
             int dutchdatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x404;
-            int dutchindex = r.ReadInt32();
+            int _dutchindex = r.ReadInt32();
+            int dutchindex = _dutchindex + localemagic;
 
             r.Position = englishcountoffset + 0x408;
-            int dutchdata = r.ReadInt32();
+            int _dutchdata = r.ReadInt32();
+            int dutchdata = _dutchdata + localemagic;
 
             r.Position = englishcountoffset + 0x440;
             int norwegiancount = r.ReadInt32();
@@ -655,10 +715,12 @@ namespace Functions
             int norwegiandatasize = r.ReadInt32();
 
             r.Position = englishcountoffset + 0x448;
-            int norwegianindex = r.ReadInt32();
+            int _norwegianindex = r.ReadInt32();
+            int norwegianindex = _norwegianindex + localemagic;
 
             r.Position = englishcountoffset + 0x44C;
-            int norwegiandata = r.ReadInt32();
+            int _norwegiandata = r.ReadInt32();
+            int norwegiandata = _norwegiandata + localemagic;
 
             int[] localeinfo = {
                          englishcount,
